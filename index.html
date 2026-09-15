@@ -30,7 +30,7 @@
       color: var(--text);
       font: 16px/1.55 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    button, summary { font: inherit; }
+    button { font: inherit; }
     a { color: inherit; }
     :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
     .shell { width: min(1440px, calc(100% - 40px)); margin: 0 auto; }
@@ -67,11 +67,7 @@
     .ref-copy strong { display: block; font-size: .85rem; }
     .ref-copy span { display: block; margin-top: 4px; color: var(--muted); font-size: .76rem; line-height: 1.35; }
     .recovered { color: #fcd34d !important; }
-    details { border-top: 1px solid var(--line); }
-    summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 0; cursor: pointer; font-weight: 700; list-style: none; }
-    summary::-webkit-details-marker { display: none; }
-    summary::after { content: "+"; color: var(--muted); font-size: 1.25rem; font-weight: 400; }
-    details[open] summary::after { content: "−"; }
+    .prompt { padding-top: 18px; border-top: 1px solid var(--line); }
     .prompt-actions { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 12px; }
     button { border: 1px solid #46505f; border-radius: 9px; padding: 8px 11px; background: #202630; color: var(--text); cursor: pointer; font-size: .86rem; font-weight: 680; }
     button:hover { background: #2a323e; }
@@ -194,19 +190,13 @@
     }
     function renderExample(example, index) {
       const article = document.createElement("article");
-      article.innerHTML = `<div class="case-head"><h3>${example.label}</h3><span class="case-index">CASE ${String(index + 1).padStart(2, "0")}</span></div><div class="case-body"><div class="video-panel"><video src="${videoUrl(example)}" controls playsinline preload="metadata"></video><a class="video-link" href="${videoUrl(example)}" target="_blank" rel="noreferrer">Open final CloudFront video ↗</a></div><div class="details-panel"><p class="label">Ordered reference images sent to Seedance</p><div class="references">${example.references.map(referenceMarkup).join("")}</div><details><summary>Compiled prompt</summary><div class="prompt-actions"><button class="primary copy-bundle" type="button">Copy video + references + prompt</button><button class="copy-prompt" type="button">Copy prompt only</button></div><pre class="loading">Open to load prompt…</pre></details></div></div>`;
-      const details = article.querySelector("details");
+      article.innerHTML = `<div class="case-head"><h3>${example.label}</h3><span class="case-index">CASE ${String(index + 1).padStart(2, "0")}</span></div><div class="case-body"><div class="video-panel"><video src="${videoUrl(example)}" controls playsinline preload="metadata"></video><a class="video-link" href="${videoUrl(example)}" target="_blank" rel="noreferrer">Open final CloudFront video ↗</a></div><div class="details-panel"><p class="label">Ordered reference images sent to Seedance</p><div class="references">${example.references.map(referenceMarkup).join("")}</div><div class="prompt"><p class="label">Compiled prompt</p><div class="prompt-actions"><button class="primary copy-bundle" type="button">Copy video + references + prompt</button><button class="copy-prompt" type="button">Copy prompt only</button></div><pre class="loading">Loading prompt…</pre></div></div></div>`;
       const pre = article.querySelector("pre");
-      details.addEventListener("toggle", async () => {
-        if (!details.open || pre.dataset.loaded) return;
-        pre.textContent = "Loading prompt…";
-        try {
-          pre.textContent = await loadPrompt(example);
-          pre.dataset.loaded = "true";
-          pre.classList.remove("loading");
-        } catch (error) {
-          pre.textContent = "Could not load the compiled prompt.";
-        }
+      loadPrompt(example).then(prompt => {
+        pre.textContent = prompt;
+        pre.classList.remove("loading");
+      }).catch(() => {
+        pre.textContent = "Could not load the compiled prompt.";
       });
       article.querySelector(".copy-prompt").addEventListener("click", async () => copyText(await loadPrompt(example), "Prompt copied"));
       article.querySelector(".copy-bundle").addEventListener("click", async () => {
