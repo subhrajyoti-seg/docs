@@ -1,101 +1,225 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Seedance 2.5 · 720p upscale comparison</title>
-<style>
-  :root { color-scheme: light; }
-  body {
-    font: 16px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif;
-    max-width: 1500px; margin: 0 auto; padding: 32px 22px 90px; color: #1a1a1a;
-  }
-  h1 { font-size: 26px; line-height: 1.25; margin: 0 0 8px; }
-  h2 { font-size: 19px; margin: 48px 0 12px; padding-top: 22px; border-top: 1px solid #d0d0d0; }
-  h3 { font-size: 16px; margin: 30px 0 8px; }
-  p { margin: 0 0 12px; }
-  .lede { font-size: 17px; color: #444; }
-  .meta { color: #777; font-size: 14px; }
-  .note { border: 1px solid #bbb; background: #f7f7f5; padding: 14px 18px; margin: 22px 0; }
-  .comparison { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 12px; }
-  .cell { min-width: 0; }
-  video { width: 100%; height: auto; display: block; background: #000; border: 1px solid #bbb; }
-  .cap { color: #444; font-size: 13.5px; margin: 5px 0 0; }
-  .cap b { color: #1a1a1a; }
-  button { font: inherit; font-size: 13px; padding: 3px 11px; margin: 9px 0 0; cursor: pointer; }
-  button:focus-visible { outline: 2px solid #06c; outline-offset: 2px; }
-  footer { margin-top: 60px; padding-top: 18px; border-top: 1px solid #d0d0d0; font-size: 13.5px; color: #666; }
-  @media (max-width: 980px) { .comparison { grid-template-columns: repeat(2, minmax(240px, 1fr)); } }
-  @media (max-width: 560px) { body { padding: 24px 16px 64px; } .comparison { grid-template-columns: 1fr; } }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Funcell · Animation style comparison</title>
+  <meta name="description" content="Seedance 2.5 animation-style comparison with rendered videos, compiled prompts, and ordered reference images.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0d12'/%3E%3Cpath d='M18 17h28v8H26v8h17v8H26v12h-8z' fill='%236ee7b7'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090b0f;
+      --surface: #11151c;
+      --surface-2: #171c24;
+      --line: #2a303b;
+      --text: #f4f6f8;
+      --muted: #9ca6b5;
+      --good: #6ee7b7;
+      --good-bg: #0b2b24;
+      --bad: #fca5a5;
+      --bad-bg: #32191d;
+      --focus: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 80% -10%, rgba(110, 231, 183, .09), transparent 30rem), var(--bg);
+      color: var(--text);
+      font: 16px/1.55 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, summary { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .shell { width: min(1440px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 42px 0 28px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 9px; color: var(--good); font-size: .78rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(1.85rem, 4vw, 3.35rem); line-height: 1.04; letter-spacing: -.04em; }
+    .lede { max-width: 780px; margin: 15px 0 0; color: var(--muted); font-size: 1.04rem; }
+    nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    nav a { padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); text-decoration: none; font-size: .9rem; }
+    nav a:hover { border-color: #586171; color: var(--text); }
+    main { padding: 14px 0 80px; }
+    section { scroll-margin-top: 20px; }
+    .section-heading { display: flex; align-items: center; gap: 12px; margin: 42px 0 16px; }
+    .section-heading h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.02em; }
+    .pill { padding: 4px 9px; border-radius: 999px; font-size: .76rem; font-weight: 760; letter-spacing: .04em; text-transform: uppercase; }
+    .pill.good { color: var(--good); background: var(--good-bg); }
+    .pill.bad { color: var(--bad); background: var(--bad-bg); }
+    .cases { display: grid; gap: 22px; }
+    article { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, rgba(255,255,255,.025), transparent 45%), var(--surface); box-shadow: 0 22px 70px rgba(0,0,0,.2); }
+    .case-head { display: flex; justify-content: space-between; gap: 20px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+    .case-head h3 { margin: 0; font-size: 1rem; line-height: 1.4; overflow-wrap: anywhere; }
+    .case-index { flex: 0 0 auto; color: var(--muted); font: 700 .76rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .case-body { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(420px, 1.2fr); }
+    .video-panel { padding: 20px; border-right: 1px solid var(--line); }
+    video { display: block; width: min(100%, 440px); max-height: 76vh; margin: auto; border-radius: 12px; background: #000; }
+    .video-link { display: block; margin-top: 12px; color: var(--muted); font-size: .86rem; text-align: center; overflow-wrap: anywhere; }
+    .details-panel { min-width: 0; padding: 20px; }
+    .label { margin: 0 0 11px; color: var(--muted); font-size: .79rem; font-weight: 760; letter-spacing: .08em; text-transform: uppercase; }
+    .references { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .reference { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); overflow: hidden; text-decoration: none; }
+    .reference:hover { border-color: #596372; }
+    .reference img { display: block; width: 100%; height: 148px; object-fit: contain; background: #0c0f14; }
+    .ref-copy { display: block; padding: 10px; }
+    .ref-copy strong { display: block; font-size: .85rem; }
+    .ref-copy span { display: block; margin-top: 4px; color: var(--muted); font-size: .76rem; line-height: 1.35; }
+    .recovered { color: #fcd34d !important; }
+    details { border-top: 1px solid var(--line); }
+    summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 0; cursor: pointer; font-weight: 700; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--muted); font-size: 1.25rem; font-weight: 400; }
+    details[open] summary::after { content: "−"; }
+    .prompt-actions { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 12px; }
+    button { border: 1px solid #46505f; border-radius: 9px; padding: 8px 11px; background: #202630; color: var(--text); cursor: pointer; font-size: .86rem; font-weight: 680; }
+    button:hover { background: #2a323e; }
+    button.primary { border-color: #34705e; background: #123b31; color: #b7f7df; }
+    button.primary:hover { background: #174b3e; }
+    pre { max-height: 520px; overflow: auto; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: #080a0e; color: #dce2ea; white-space: pre-wrap; overflow-wrap: anywhere; font: .82rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .loading { color: var(--muted); }
+    footer { padding: 24px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+    .toast { position: fixed; right: 18px; bottom: 18px; z-index: 10; padding: 10px 13px; border: 1px solid #34705e; border-radius: 10px; background: #123b31; color: #c6fae7; box-shadow: 0 16px 50px rgba(0,0,0,.4); opacity: 0; transform: translateY(8px); pointer-events: none; transition: .18s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 900px) {
+      .case-body { grid-template-columns: 1fr; }
+      .video-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+      video { max-height: 68vh; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 24px, 1440px); }
+      header { padding-top: 28px; }
+      .case-head, .details-panel, .video-panel { padding: 15px; }
+      .case-head { display: block; }
+      .case-index { margin-top: 7px; }
+      .references { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reference img { height: 118px; }
+    }
+  </style>
 </head>
 <body>
-
-<h1>Seedance 2.5 · 720p upscale comparison</h1>
-<p class="lede">Four videos generated by Seedance 2.5 at 720p, upscaled with Lanczos and conservative CAS sharpening to 1080p, 1440p, and 4K.</p>
-<p class="meta">Original 720p on the left · each row is the same clip at four output sizes</p>
-
-<div class="note">
-  Compare at fullscreen or on a larger display: at small player sizes, the browser scales every version down and conceals much of the difference.
-</div>
-
-<h2>Comparisons</h2>
-
-<h3>Seedance 2.5 video 01</h3>
-<div class="comparison">
-  <div class="cell"><video src="videos/seedance-2-5_01_720p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>720p</b> · original</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_01_1080p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1080p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_01_1440p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1440p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_01_2160p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>4K</b> · CAS balanced</p></div>
-</div>
-<button type="button" onclick="playRow(this)">play all four</button>
-
-<h3>Seedance 2.5 video 02</h3>
-<div class="comparison">
-  <div class="cell"><video src="videos/seedance-2-5_02_720p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>720p</b> · original</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_02_1080p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1080p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_02_1440p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1440p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_02_2160p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>4K</b> · CAS balanced</p></div>
-</div>
-<button type="button" onclick="playRow(this)">play all four</button>
-
-<h3>Seedance 2.5 video 03</h3>
-<div class="comparison">
-  <div class="cell"><video src="videos/seedance-2-5_03_720p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>720p</b> · original</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_03_1080p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1080p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_03_1440p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1440p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_03_2160p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>4K</b> · CAS balanced</p></div>
-</div>
-<button type="button" onclick="playRow(this)">play all four</button>
-
-<h3>Seedance 2.5 video 04</h3>
-<div class="comparison">
-  <div class="cell"><video src="videos/seedance-2-5_04_720p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>720p</b> · original</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_04_1080p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1080p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_04_1440p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>1440p</b> · CAS balanced</p></div>
-  <div class="cell"><video src="videos/seedance-2-5_04_2160p.mp4" controls loop playsinline preload="metadata"></video><p class="cap"><b>4K</b> · CAS balanced</p></div>
-</div>
-<button type="button" onclick="playRow(this)">play all four</button>
-
-<h2>Takeaway</h2>
-<p>In these clips, 720p to 1080p is the most accurate and useful step up: it presents the source more cleanly at a larger display size while retaining its natural character. The 1440p and 4K versions offer more display pixels, but they cannot recreate detail that was not present in the 720p Seedance 2.5 original.</p>
-
-<footer>
-  Seedance 2.5 generated the original 720p videos. Upscales use Lanczos resizing with CAS balanced sharpening (0.35), H.264, and the original 24 fps audio.
-</footer>
-
-<script>
-function playRow(button) {
-  if (!button.dataset.label) button.dataset.label = button.textContent;
-  const videos = button.previousElementSibling.querySelectorAll('video');
-  const play = Array.from(videos).some(video => video.paused);
-  videos.forEach(video => {
-    video.currentTime = 0;
-    if (play) video.play(); else video.pause();
-  });
-  button.textContent = play ? 'pause all four' : button.dataset.label;
-}
-</script>
+  <header>
+    <div class="shell">
+      <p class="eyebrow">Seedance 2.5 · Funcell</p>
+      <h1>Animation style comparison</h1>
+      <p class="lede">Four generated videos grouped by observed art-style quality. Each example includes the final render, the exact ordered reference images sent to Seedance, and the compiled prompt.</p>
+      <nav aria-label="Comparison groups">
+        <a href="#better">Better animation style</a>
+        <a href="#worse">Worse art style</a>
+      </nav>
+    </div>
+  </header>
+  <main class="shell">
+    <section id="better">
+      <div class="section-heading"><h2>Better animation style videos</h2><span class="pill good">Better</span></div>
+      <div class="cases" id="better-cases"></div>
+    </section>
+    <section id="worse">
+      <div class="section-heading"><h2>Worse art style videos</h2><span class="pill bad">Worse</span></div>
+      <div class="cases" id="worse-cases"></div>
+    </section>
+  </main>
+  <footer><div class="shell">Reference order is the render-time provider order: <code>@Image1</code>, <code>@Image2</code>, and so on. Two deleted historical assets were recovered from S3 version history and are hosted with this page.</div></footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script>
+    const CF = "https://d3sh9a7fxwavlr.cloudfront.net";
+    const examples = [
+      {
+        group: "better",
+        label: "funcell_manual_c0f7c25e_a840_4961_89ae_2ce04ddfa8e3_2026-09-13_video",
+        brief: "bf-funcell_manual_c0f7c25e_a840_4961_89ae_2ce04ddfa8e3_2026-09-13_video-r1-30441812",
+        prompt: "data/c0f7c25e.json",
+        references: [
+          ["Bearded Mafia Boss", "Character 2 identity", `${CF}/game-asset-generated/funcell/f02343e9-b534-5e9b-a533-7c6ca8129aa5/primary.png`],
+          ["Apartment hallway", "Environment", `${CF}/game-asset-generated/funcell/e0965de7-7885-54e6-936c-abb5247cfb74/primary.png`],
+          ["Money duffel bag", "Game object", `${CF}/game-asset-generated/funcell/927495f1-1c81-5885-a30d-11ec97d88353/primary.png`]
+        ]
+      },
+      {
+        group: "better",
+        label: "bf-funcell_manual_bb45b09c_bb15_42e1_904b_9db7d5943276_2026-09-12_video-r1-76f7c034",
+        brief: "bf-funcell_manual_bb45b09c_bb15_42e1_904b_9db7d5943276_2026-09-12_video-r1-76f7c034",
+        prompt: "data/bb45b09c.json",
+        references: [
+          ["Protagonist", "Character 1 identity", `${CF}/game-asset-generated/funcell/eac7baf5-7195-5117-9448-13d6fbf093a5/primary.png`],
+          ["Apartment living room", "Environment", `${CF}/game-asset-generated/funcell/8b7b31b3-fb2c-5b67-bbc2-2c0e6e0eb8df/primary.png`],
+          ["Orange-cased smartphone", "Game object", `${CF}/game-asset-generated/funcell/7d7119ea-08ec-5845-bdfe-16f30a1b5213/primary.png`],
+          ["Mafia Boss", "Character 2 identity", `${CF}/game-asset-generated/funcell/81ca6256-2978-5150-977a-7f102e23ffa7/primary.png`]
+        ]
+      },
+      {
+        group: "worse",
+        label: "bf-funcell_admin_override_b5a9ebaa_2026-09-09_video-r1-416388ad",
+        brief: "bf-funcell_admin_override_b5a9ebaa_2026-09-09_video-r1-416388ad",
+        prompt: "data/b5a9ebaa.json",
+        references: [["Jack", "Character 1 identity · recovered historical asset", "assets/b5a9ebaa-image1.png", true]]
+      },
+      {
+        group: "worse",
+        label: "bf-funcell_admin_override_649ac6ac_2026-09-11_video-r1-81755425",
+        brief: "bf-funcell_admin_override_649ac6ac_2026-09-11_video-r1-81755425",
+        prompt: "data/649ac6ac.json",
+        references: [["Jack", "Character 1 identity · recovered historical asset", "assets/649ac6ac-image1.png", true]]
+      }
+    ];
+    const promptCache = new Map();
+    const toast = document.querySelector(".toast");
+    let toastTimer;
+    const videoUrl = example => `${CF}/funcell/video-gen/${example.brief}/renders/v0001/out.mp4`;
+    const absoluteUrl = path => new URL(path, location.href).href;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+    async function loadPrompt(example) {
+      if (promptCache.has(example.prompt)) return promptCache.get(example.prompt);
+      const response = await fetch(example.prompt);
+      if (!response.ok) throw new Error(`Prompt request failed: ${response.status}`);
+      const data = await response.json();
+      const prompt = data.scenes?.["1"]?.videoPrompt;
+      if (!prompt) throw new Error("Prompt is missing from the sidecar");
+      promptCache.set(example.prompt, prompt);
+      return prompt;
+    }
+    async function copyText(text, message) {
+      await navigator.clipboard.writeText(text);
+      showToast(message);
+    }
+    function referenceMarkup(reference, index) {
+      const [name, role, url, recovered] = reference;
+      return `<a class="reference" href="${url}" target="_blank" rel="noreferrer"><img src="${url}" alt="@Image${index + 1}: ${name}" loading="lazy"><span class="ref-copy"><strong>@Image${index + 1} · ${name}</strong><span class="${recovered ? "recovered" : ""}">${role}</span></span></a>`;
+    }
+    function renderExample(example, index) {
+      const article = document.createElement("article");
+      article.innerHTML = `<div class="case-head"><h3>${example.label}</h3><span class="case-index">CASE ${String(index + 1).padStart(2, "0")}</span></div><div class="case-body"><div class="video-panel"><video src="${videoUrl(example)}" controls playsinline preload="metadata"></video><a class="video-link" href="${videoUrl(example)}" target="_blank" rel="noreferrer">Open final CloudFront video ↗</a></div><div class="details-panel"><p class="label">Ordered reference images sent to Seedance</p><div class="references">${example.references.map(referenceMarkup).join("")}</div><details><summary>Compiled prompt</summary><div class="prompt-actions"><button class="primary copy-bundle" type="button">Copy video + references + prompt</button><button class="copy-prompt" type="button">Copy prompt only</button></div><pre class="loading">Open to load prompt…</pre></details></div></div>`;
+      const details = article.querySelector("details");
+      const pre = article.querySelector("pre");
+      details.addEventListener("toggle", async () => {
+        if (!details.open || pre.dataset.loaded) return;
+        pre.textContent = "Loading prompt…";
+        try {
+          pre.textContent = await loadPrompt(example);
+          pre.dataset.loaded = "true";
+          pre.classList.remove("loading");
+        } catch (error) {
+          pre.textContent = "Could not load the compiled prompt.";
+        }
+      });
+      article.querySelector(".copy-prompt").addEventListener("click", async () => copyText(await loadPrompt(example), "Prompt copied"));
+      article.querySelector(".copy-bundle").addEventListener("click", async () => {
+        const prompt = await loadPrompt(example);
+        const refs = example.references.map((ref, i) => `@Image${i + 1} · ${ref[0]} · ${absoluteUrl(ref[2])}`).join("\n");
+        await copyText(`${example.label}\n\nVideo\n${videoUrl(example)}\n\nReference images\n${refs}\n\nCompiled prompt\n${prompt}`, "Full bundle copied");
+      });
+      return article;
+    }
+    for (const group of ["better", "worse"]) {
+      const container = document.querySelector(`#${group}-cases`);
+      examples.filter(item => item.group === group).forEach((example, index) => container.appendChild(renderExample(example, index)));
+    }
+  </script>
 </body>
 </html>
